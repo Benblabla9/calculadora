@@ -2,90 +2,51 @@ package com.alonsodelcid.calculadora
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.EditText
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.math.roundToLong
+import kotlin.math.pow
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
-    private var num1 = 0.0
-    private var num2 = 0.0
-    private var operacion = 0
+    lateinit var txtCatetoC : EditText
+    lateinit var txtCatetoB : EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        resultadoText.text = "0"
-        operacion = SIN_OPERACION
-
-        unoBtn.setOnClickListener { numberPressed("1") }
-        dosBtn.setOnClickListener { numberPressed("2") }
-        tresBtn.setOnClickListener { numberPressed("3") }
-        cuatroBtn.setOnClickListener { numberPressed("4") }
-        cincoBtn.setOnClickListener { numberPressed("5") }
-        seisBtn.setOnClickListener { numberPressed("6") }
-        sieteBtn.setOnClickListener { numberPressed("7") }
-        ochoBtn.setOnClickListener { numberPressed("8") }
-        nueveBtn.setOnClickListener { numberPressed("9") }
-        ceroBtn.setOnClickListener { numberPressed("0") }
-        puntoBtn.setOnClickListener { numberPressed(".") }
-
-        clearBtn.setOnClickListener { resetAll() }
-
-        sumaBtn.setOnClickListener { operationPressed(SUMA) }
-        restaBtn.setOnClickListener { operationPressed(RESTA) }
-        multiplicarBtn.setOnClickListener { operationPressed(MULTIPLICACION) }
-        divisionBtn.setOnClickListener { operationPressed(DIVISION) }
-
-        igualBtn.setOnClickListener { resolvePressed() }
+        txtCatetoC = findViewById(R.id.txtCatetoC)
+        txtCatetoB = findViewById(R.id.txtCatetoB)
+        btnLimpiar.setOnClickListener { limpiarCampos() }
+        btnCalcular.setOnClickListener { calcularHipotenusa() }
     }
 
-    private fun numberPressed(num: String){
-        if(resultadoText.text == "0" && num != ".") {
-            resultadoText.text = "$num"
-        } else {
-            resultadoText.text = "${resultadoText.text}$num"
+    private fun calcularHipotenusa(){
+            if(validarCampos()) {
+                var catetoB : Double = txtCatetoB.text.toString().toDouble()
+                var catetoC : Double = txtCatetoC.text.toString().toDouble()
+                var result : Double
+                var bPow2 : Double = catetoB.pow(2)
+                var cPow2 : Double = catetoC.pow(2)
+                result = (bPow2 + cPow2).pow(.5)
+                var mensaje = "El resultado es ${result}."
+                mostrarMensaje(mensaje)
+            } else {
+                mostrarMensaje("Campos vacios")
+            }
         }
 
-        if(operacion == SIN_OPERACION){
-            num1 = resultadoText.text.toString().toDouble()
-        } else {
-            num2 = resultadoText.text.toString().toDouble()
-        }
+    private fun validarCampos(): Boolean {
+        return !txtCatetoB.text.toString().equals("") &&
+                !txtCatetoC.text.toString().equals("")
     }
 
-    private fun operationPressed(operacion: Int){
-        this.operacion = operacion
-        num1 = resultadoText.text.toString().toDouble()
-
-        resultadoText.text = "0"
+    private fun limpiarCampos() {
+        txtCatetoB.setText("")
+        txtCatetoC.setText("")
     }
 
-    private fun resolvePressed(){
-
-        val result = when(operacion) {
-            SUMA -> num1 + num2
-            RESTA -> num1 - num2
-            MULTIPLICACION -> num1 * num2
-            DIVISION -> num1 / num2
-            else -> 0
-        }
-
-        num1 = result as Double
-
-        resultadoText.text = if("$result".endsWith(".0")) { "$result".replace(".0","") } else { "%.2f".format(result) }
+    private fun mostrarMensaje(mensaje :String) {
+        Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show()
     }
 
-    private fun resetAll(){
-        resultadoText.text = "0"
-        num1 = 0.0
-        num2 = 0.0
-    }
-
-    companion object {
-        const val SUMA = 1
-        const val RESTA = 2
-        const val MULTIPLICACION = 3
-        const val DIVISION = 4
-        const val SIN_OPERACION = 0
-    }
 }
