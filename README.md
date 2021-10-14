@@ -1,2 +1,2 @@
-# calculadora
-Calculadora simple Android + Kotlin
+# Hipotenusa
+Aplicación para calcular hipotenusa simple Android + Kotlin
